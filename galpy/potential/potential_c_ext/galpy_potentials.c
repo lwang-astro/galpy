@@ -56,12 +56,12 @@ void free_potentialArgs(int npot, struct potentialArg * potentialArgs){
     free((potentialArgs+ii)->args);
   }
 }
-double evaluatePotentials(double R, double Z,
+double evaluatePotentials(double R, double Z, double phi, double t,
 			  int nargs, struct potentialArg * potentialArgs){
   int ii;
   double pot= 0.;
   for (ii=0; ii < nargs; ii++){
-    pot+= potentialArgs->potentialEval(R,Z,0.,0.,
+      pot+= potentialArgs->potentialEval(R,Z, phi, t,
 				       potentialArgs);
     potentialArgs++;
   }

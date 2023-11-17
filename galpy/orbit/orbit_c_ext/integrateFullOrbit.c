@@ -83,6 +83,7 @@ void parse_leapFuncArgs_Full(int npot,
       potentialArgs->requiresVelocity= false;
       break;
     case 1: //DehnenBarPotential, 6 arguments
+      potentialArgs->potentialEval = &DehnenBarPotentialEval;
       potentialArgs->Rforce= &DehnenBarPotentialRforce;
       potentialArgs->phitorque= &DehnenBarPotentialphitorque;
       potentialArgs->zforce= &DehnenBarPotentialzforce;

@@ -61,7 +61,7 @@ EXPORT void calc_potential(int nR,
     tid = 0;
 #endif
     for (jj=0; jj < nz; jj++){
-      *(row+jj+tid*nz)= evaluatePotentials(*(R+ii),*(z+jj),npot,potentialArgs);
+      *(row+jj+tid*nz)= evaluatePotentials(*(R+ii),*(z+jj),0.,0.,npot,potentialArgs);
     }
     put_row(out,ii,row+tid*nz,nz);
   }
@@ -162,7 +162,7 @@ EXPORT void eval_potential(int nR,
   parse_leapFuncArgs_Full(npot,potentialArgs,&pot_type,&pot_args,&pot_tfuncs);
   //Run through and evaluate
   for (ii=0; ii < nR; ii++){
-    *(out+ii)= evaluatePotentials(*(R+ii),*(z+ii),npot,potentialArgs);
+    *(out+ii)= evaluatePotentials(*(R+ii),*(z+ii),0.,0.,npot,potentialArgs);
   }
   free_potentialArgs(npot,potentialArgs);
   free(potentialArgs);

@@ -65,6 +65,7 @@ void parse_leapFuncArgs(int npot,struct potentialArg * potentialArgs,
       potentialArgs->requiresVelocity= false;
       break;
     case 1: //DehnenBarPotential, 6 arguments
+      potentialArgs->potentialEval = &DehnenBarPotentialEval;
       potentialArgs->planarRforce= &DehnenBarPotentialPlanarRforce;
       potentialArgs->planarphitorque= &DehnenBarPotentialPlanarphitorque;
       potentialArgs->planarR2deriv= &DehnenBarPotentialPlanarR2deriv;

@@ -94,7 +94,7 @@ struct potentialArg{
 void init_potentialArgs(int,struct potentialArg *);
 void free_potentialArgs(int,struct potentialArg *);
 //Potential and force evaluation
-double evaluatePotentials(double,double,int, struct potentialArg *);
+double evaluatePotentials(double,double,double,double,int, struct potentialArg *);
 // Hack to allow optional velocity for dissipative forces
 // https://stackoverflow.com/a/52610204/10195320
 // Reason to use ##__VA_ARGS__ is that when no optional velocity is supplied,
@@ -188,6 +188,8 @@ double LogarithmicHaloPotentialPlanarRphideriv(double ,double, double,
 double LogarithmicHaloPotentialDens(double ,double , double, double,
 				    struct potentialArg *);
 //DehnenBarPotential
+double DehnenBarPotentialEval(double,double,double,double,
+				struct potentialArg *);
 double DehnenBarPotentialRforce(double,double,double,double,
 				struct potentialArg *);
 double DehnenBarPotentialphitorque(double,double,double,double,

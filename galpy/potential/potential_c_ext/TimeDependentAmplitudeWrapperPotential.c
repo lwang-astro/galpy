@@ -6,7 +6,7 @@ double TimeDependentAmplitudeWrapperPotentialEval(double R,double z,double phi,
   double * args= potentialArgs->args;
   //Calculate potential, only used in actionAngle, so phi=0, t=0
   return *args * (*(*(potentialArgs->tfuncs)))(t)	\
-              * evaluatePotentials(R,z,potentialArgs->nwrapped,
+    * evaluatePotentials(R,z,0.,0.,potentialArgs->nwrapped,
 			                             potentialArgs->wrappedPotentialArg);
 }
 double TimeDependentAmplitudeWrapperPotentialRforce(double R,double z,double phi,

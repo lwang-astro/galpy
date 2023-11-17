@@ -1,5 +1,5 @@
 #include <math.h>
-#include <galpy_potentials.h>
+#include "galpy_potentials.h"
 //DehnenBarPotential
 //
 double dehnenBarSmooth(double t,double tform, double tsteady){
@@ -14,6 +14,27 @@ double dehnenBarSmooth(double t,double tform, double tsteady){
   else
     smooth= 1.;
   return smooth;
+}
+double DehnenBarPotentialEval(double R,double z,double phi,double t,
+				struct potentialArg * potentialArgs){
+  double * args= potentialArgs->args;
+  //declare
+  double smooth;
+  double r;
+  //Get args
+  double amp= *args++;
+  double tform= *args++;
+  double tsteady= *args++;
+  double rb= *args++;
+  double omegab= *args++;
+  double barphi= *args++;
+  //Calculate Rforce
+  smooth= dehnenBarSmooth(t,tform,tsteady);
+  r= sqrt( R * R + z * z );
+  if (r <= rb )
+      return amp*smooth*cos(2.*(phi-omegab*t-barphi))*pow(R/r,2.0)*(pow(r/rb,3.) - 2);
+  else
+      return amp*smooth*cos(2.*(phi-omegab*t-barphi))*pow(R/r,2.0)*(-pow(rb/r,3.));
 }
 double DehnenBarPotentialRforce(double R,double z,double phi,double t,
 				struct potentialArg * potentialArgs){
