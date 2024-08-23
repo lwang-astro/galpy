@@ -6,7 +6,7 @@ from scipy import integrate, interpolate, special
 
 from ..potential import interpSphericalPotential
 from ..potential.Potential import _evaluatePotentials
-from ..util import conversion, galpyWarning
+from ..util import conversion, quadpack
 from ..util._optional_deps import _JAX_LOADED
 from .sphericaldf import anisotropicsphericaldf, sphericaldf
 
@@ -123,9 +123,9 @@ class _constantbetadf(anisotropicsphericaldf):
                 _evaluatePotentials(self._pot, r, 0) + 0.5 * v**2.0
             ) * v ** (2.0 - 2.0 * self._beta)
         else:
-            return self.fE(
-                _evaluatePotentials(self._pot, r, 0) + 0.5 * v**2.0
-            ) * v ** (2.0 - 2.0 * self._beta)
+            return self.fE(_evaluatePotentials(self._pot, r, 0) + 0.5 * v**2.0) * v ** (
+                2.0 - 2.0 * self._beta
+            )
 
     def _vmomentdensity(self, r, n, m):
         if m % 2 == 1 or n % 2 == 1:
@@ -339,7 +339,7 @@ class constantbetadf(_constantbetadf):
             # at the lower end and infinity at the upper end
             out[indx] = numpy.array(
                 [
-                    integrate.quadrature(
+                    quadpack.quadrature(
                         lambda t: _fEintegrand_smallr(
                             t,
                             self._pot,
@@ -366,7 +366,7 @@ class constantbetadf(_constantbetadf):
             # 2nd half of the integral
             out[indx] += numpy.array(
                 [
-                    integrate.quadrature(
+                    quadpack.quadrature(
                         lambda t: _fEintegrand_larger(
                             t, self._pot, tE, self._gradfunc, self._alpha
                         ),
@@ -384,9 +384,9 @@ def _fEintegrand_raw(r, pot, E, dmp1nudrmp1, alpha):
     out = numpy.zeros_like(r)  # Avoid JAX item assignment issues
     # print("r",r,dmp1nudrmp1(r),(_evaluatePotentials(pot,r,0)-E))
     out[:] = dmp1nudrmp1(r) / (_evaluatePotentials(pot, r, 0) - E) ** alpha
-    out[
-        True ^ numpy.isfinite(out)
-    ] = 0.0  # assume these are where denom is slightly neg.
+    out[True ^ numpy.isfinite(out)] = (
+        0.0  # assume these are where denom is slightly neg.
+    )
     return out
 
 

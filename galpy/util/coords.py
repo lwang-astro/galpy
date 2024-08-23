@@ -1023,9 +1023,11 @@ def XYZ_to_galcenrect(X, Y, Z, Xsun=1.0, Zsun=0.0, _extra_rot=True):
     zero = numpy.zeros_like(costheta)
     one = numpy.ones_like(costheta)
     return numpy.einsum(
-        "ijk,jk->ik"
-        if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
-        else "ij,jk->ik",
+        (
+            "ijk,jk->ik"
+            if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
+            else "ij,jk->ik"
+        ),
         numpy.array(
             [[costheta, zero, -sintheta], [zero, one, zero], [sintheta, zero, costheta]]
         ),
@@ -1072,9 +1074,11 @@ def galcenrect_to_XYZ(X, Y, Z, Xsun=1.0, Zsun=0.0, _extra_rot=True):
     one = numpy.ones_like(costheta)
     out = (
         numpy.einsum(
-            "ijk,jk->ik"
-            if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
-            else "ij,jk->ik",
+            (
+                "ijk,jk->ik"
+                if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
+                else "ij,jk->ik"
+            ),
             numpy.array(
                 [
                     [-costheta, zero, -sintheta],
@@ -1311,9 +1315,11 @@ def vxvyvz_to_galcenrect(
     one = numpy.ones_like(costheta)
     return (
         numpy.einsum(
-            "ijk,jk->ik"
-            if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
-            else "ij,jk->ik",
+            (
+                "ijk,jk->ik"
+                if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
+                else "ij,jk->ik"
+            ),
             numpy.array(
                 [
                     [costheta, zero, -sintheta],
@@ -1428,9 +1434,11 @@ def galcenrect_to_vxvyvz(
     zero = numpy.zeros_like(costheta)
     one = numpy.ones_like(costheta)
     out = numpy.einsum(
-        "ijk,jk->ik"
-        if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
-        else "ij,jk->ik",
+        (
+            "ijk,jk->ik"
+            if isinstance(costheta, numpy.ndarray) and costheta.ndim > 0
+            else "ij,jk->ik"
+        ),
         numpy.array(
             [
                 [-costheta, zero, -sintheta],
@@ -2432,7 +2440,10 @@ def custom_to_radec(phi1, phi2, T=None, degree=False):
     if T is None:
         raise ValueError("Must set T= for custom_to_radec")
     return radec_to_custom(
-        phi1, phi2, T=numpy.transpose(T), degree=degree  # T.T = inv(T)
+        phi1,
+        phi2,
+        T=numpy.transpose(T),
+        degree=degree,  # T.T = inv(T)
     )
 
 
@@ -2467,7 +2478,12 @@ def custom_to_pmrapmdec(pmphi1, pmphi2, phi1, phi2, T=None, degree=False):
     if T is None:
         raise ValueError("Must set T= for custom_to_pmrapmdec")
     return pmrapmdec_to_custom(
-        pmphi1, pmphi2, phi1, phi2, T=numpy.transpose(T), degree=degree  # T.T = inv(T)
+        pmphi1,
+        pmphi2,
+        phi1,
+        phi2,
+        T=numpy.transpose(T),
+        degree=degree,  # T.T = inv(T)
     )
 
 

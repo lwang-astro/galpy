@@ -36,10 +36,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: 3.10.2
-      - uses: mymindstorm/setup-emsdk@v12
+      - uses: mymindstorm/setup-emsdk@v14
         with:
           version: 3.1.14
       - run: pip install pyodide-build==0.21.0
@@ -70,7 +70,7 @@ jobs:
         run: |
           GALPY_VERSION="$(awk '/^current_version/{print $NF}' .bumpversion.cfg)"
           for f in dist/*$GALPY_VERSION*; do sudo mv -i -- "$f" "${f//$GALPY_VERSION/latest}"; done
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: galpy-wheel-pyodide
           path: dist/*.whl

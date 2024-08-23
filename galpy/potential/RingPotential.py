@@ -58,9 +58,7 @@ class RingPotential(Potential):
     def _evaluate(self, R, z, phi=0.0, t=0.0):
         # Stable as r -> infty
         m = 4.0 * self.a / ((numpy.sqrt(R) + self.a / numpy.sqrt(R)) ** 2 + z**2 / R)
-        return (
-            -4.0 * self.a / numpy.sqrt((R + self.a) ** 2 + z**2) * special.ellipk(m)
-        )
+        return -4.0 * self.a / numpy.sqrt((R + self.a) ** 2 + z**2) * special.ellipk(m)
 
     def _Rforce(self, R, z, phi=0.0, t=0.0):
         m = 4.0 * R * self.a / ((R + self.a) ** 2 + z**2)
@@ -97,9 +95,9 @@ class RingPotential(Potential):
         Raz = numpy.sqrt(Raz2)
         m = 4.0 * R * self.a / Raz2
         R2ma2mz2o4aR1m = (R**2 - self.a2 - z**2) / 4.0 / self.a / R / (1.0 - m)
-        return (
-            2 * R**2 + self.a2 + 3 * R * self.a + z**2
-        ) / R / Raz2 * self._Rforce(R, z) + 2.0 * self.a / R / Raz * (
+        return (2 * R**2 + self.a2 + 3 * R * self.a + z**2) / R / Raz2 * self._Rforce(
+            R, z
+        ) + 2.0 * self.a / R / Raz * (
             m
             * (R**2 + self.a2 + z**2)
             / 4.0

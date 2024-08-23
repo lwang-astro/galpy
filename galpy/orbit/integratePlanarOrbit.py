@@ -16,7 +16,7 @@ from ..potential.planarPotential import (
     planarPotentialFromFullPotential,
     planarPotentialFromRZPotential,
 )
-from ..potential.WrapperPotential import parentWrapperPotential
+from ..potential.WrapperPotential import WrapperPotential, parentWrapperPotential
 from ..util import _load_extension_libs, symplecticode
 from ..util._optional_deps import _NUMBA_LOADED, _TQDM_LOADED
 from ..util.leung_dop853 import dop853
@@ -51,9 +51,9 @@ def _parse_pot(pot):
                 isinstance(p, planarPotentialFromFullPotential)
                 or isinstance(p, planarPotentialFromRZPotential)
             )
-            and isinstance(p._Pot, parentWrapperPotential)
-        ) or isinstance(p, parentWrapperPotential):
-            if not isinstance(p, parentWrapperPotential):
+            and isinstance(p._Pot, (parentWrapperPotential, WrapperPotential))
+        ) or isinstance(p, (parentWrapperPotential, WrapperPotential)):
+            if not isinstance(p, (parentWrapperPotential, WrapperPotential)):
                 wrap_npot, wrap_pot_type, wrap_pot_args, wrap_pot_tfuncs = _parse_pot(
                     potential.toPlanarPotential(p._Pot._pot)
                 )
@@ -560,9 +560,7 @@ def _parse_pot(pot):
                 or isinstance(p, planarPotentialFromRZPotential)
             )
             and isinstance(p._Pot, potential.RotateAndTiltWrapperPotential)
-        ) or isinstance(
-            p, potential.RotateAndTiltWrapperPotential
-        ):  # pragma: no cover
+        ) or isinstance(p, potential.RotateAndTiltWrapperPotential):  # pragma: no cover
             raise NotImplementedError(
                 "Planar orbit integration in C for RotateAndTiltWrapperPotential not implemented; please integrate an orbit with (z,vz) = (0,0) instead"
             )
@@ -584,6 +582,22 @@ def _parse_pot(pot):
             pot_tfuncs.extend(wrap_pot_tfuncs)
             pot_args.append(p._amp)
             pot_tfuncs.append(p._A)
+        elif (
+            (
+                isinstance(p, planarPotentialFromFullPotential)
+                or isinstance(p, planarPotentialFromRZPotential)
+            )
+            and isinstance(p._Pot, potential.KuzminLikeWrapperPotential)
+        ) or isinstance(p, potential.KuzminLikeWrapperPotential):
+            if not isinstance(p, potential.KuzminLikeWrapperPotential):
+                p = p._Pot
+            pot_type.append(-10)
+            # wrap_pot_type, args, and npot obtained before this horrible if
+            pot_args.append(wrap_npot)
+            pot_type.extend(wrap_pot_type)
+            pot_args.extend(wrap_pot_args)
+            pot_tfuncs.extend(wrap_pot_tfuncs)
+            pot_args.extend([p._amp, p._a, p._b2])
     pot_type = numpy.array(pot_type, dtype=numpy.int32, order="C")
     pot_args = numpy.array(pot_args, dtype=numpy.float64, order="C")
     return (npot, pot_type, pot_args, pot_tfuncs)
@@ -640,7 +654,8 @@ def _prep_tfuncs(pot_tfuncs):
         pot_tfuncs = None  # NULL
     else:
         func_ctype = ctypes.CFUNCTYPE(
-            ctypes.c_double, ctypes.c_double  # Return type
+            ctypes.c_double,
+            ctypes.c_double,  # Return type
         )  # time
         try:  # using numba
             if not _NUMBA_LOADED:
@@ -1420,7 +1435,7 @@ def integratePlanarOrbit_sos(
                     this_vxvv,
                     t=psi + init_psi,
                     args=(pot,),
-                    **extra_kwargs
+                    **extra_kwargs,
                 )
                 # go back to the cylindrical frame
                 x = intOut[:, 2] * numpy.sin(psi + init_psi)
@@ -1445,7 +1460,7 @@ def integratePlanarOrbit_sos(
                     this_vxvv,
                     t=psi + init_psi,
                     args=(pot,),
-                    **extra_kwargs
+                    **extra_kwargs,
                 )
                 # go back to the cylindrical frame
                 x = intOut[:, 0]

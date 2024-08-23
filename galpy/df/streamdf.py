@@ -638,7 +638,7 @@ class streamdf(df):
             *args,
             xlabel=_labelDict[d1.lower()],
             ylabel=_labelDict[d2.lower()],
-            **kwargs
+            **kwargs,
         )
         if spread:
             addx, addy = self._parse_track_spread(
@@ -718,7 +718,7 @@ class streamdf(df):
             *args,
             xlabel=_labelDict[d1.lower()],
             ylabel=_labelDict[d2.lower()],
-            **kwargs
+            **kwargs,
         )
         return None
 
@@ -1042,7 +1042,7 @@ class streamdf(df):
             xlabel=xlabel,
             ylabel=ylabel,
             yrange=yrange,
-            **kwargs
+            **kwargs,
         )
         plot.plot(track_adiff, track_operp, "ko", overplot=True, **kwargs)
         return None
@@ -2650,9 +2650,7 @@ class streamdf(df):
             eigIndx = 1
         if simple:
             dt = self.meantdAngle(dangle, use_physical=False)
-            return numpy.sqrt(
-                self._sigangle2 + self._sortedSigOEig[eigIndx] * dt**2.0
-            )
+            return numpy.sqrt(self._sigangle2 + self._sortedSigOEig[eigIndx] * dt**2.0)
         aplow = numpy.amax(
             [
                 numpy.sqrt(self._sortedSigOEig[eigIndx]) * self._tdisrupt * 5.0,
@@ -3825,9 +3823,7 @@ def _determine_stream_spread_single(
     )
     # angles
     sigangle2 = (
-        sigAngle(thetasTrack) ** 2.0
-        if hasattr(sigAngle, "__call__")
-        else sigAngle**2.0
+        sigAngle(thetasTrack) ** 2.0 if hasattr(sigAngle, "__call__") else sigAngle**2.0
     )
     tsigadiag = numpy.ones(3) * sigangle2
     tsigadiag[numpy.argmax(tsigOdiag)] = 1.0

@@ -18,6 +18,7 @@ from ..potential import _dim, epifreq, omegac, vcirc
 from ..potential.planarPotential import _evaluateplanarPotentials
 from ..potential.Potential import _evaluatePotentials
 from ..potential.Potential import flatten as flatten_potential
+from ..util import quadpack
 from .actionAngle import UnboundError, actionAngle
 
 _EPS = 10.0**-15.0
@@ -341,7 +342,7 @@ class actionAngleSpherical(actionAngle):
                             E[ii],
                             L[ii],
                             fixed_quad,
-                            **kwargs
+                            **kwargs,
                         )
                     )
                 # Angles
@@ -356,7 +357,7 @@ class actionAngleSpherical(actionAngle):
                         L[ii],
                         vr[ii],
                         fixed_quad,
-                        **kwargs
+                        **kwargs,
                     )
                 )
                 az.append(
@@ -376,7 +377,7 @@ class actionAngleSpherical(actionAngle):
                         vtheta[ii],
                         phi[ii],
                         fixed_quad,
-                        **kwargs
+                        **kwargs,
                     )
                 )
             Op = numpy.array(Op)
@@ -534,7 +535,7 @@ class actionAngleSpherical(actionAngle):
                     rap,
                     args=(E, L, self._2dpot),
                     n=10,
-                    **kwargs
+                    **kwargs,
                 )[0]
                 / numpy.pi
             )
@@ -546,7 +547,7 @@ class actionAngleSpherical(actionAngle):
                         rperi,
                         rap,
                         args=(E, L, self._2dpot),
-                        **kwargs
+                        **kwargs,
                     )
                 )
             )[0] / numpy.pi
@@ -555,12 +556,12 @@ class actionAngleSpherical(actionAngle):
         Tr = 0.0
         if Rmean > rperi and not fixed_quad:
             Tr += numpy.array(
-                integrate.quadrature(
+                quadpack.quadrature(
                     _TrSphericalIntegrandSmall,
                     0.0,
                     numpy.sqrt(Rmean - rperi),
                     args=(E, L, self._2dpot, rperi),
-                    **kwargs
+                    **kwargs,
                 )
             )[0]
         elif Rmean > rperi and fixed_quad:
@@ -570,16 +571,16 @@ class actionAngleSpherical(actionAngle):
                 numpy.sqrt(Rmean - rperi),
                 args=(E, L, self._2dpot, rperi),
                 n=10,
-                **kwargs
+                **kwargs,
             )[0]
         if Rmean < rap and not fixed_quad:
             Tr += numpy.array(
-                integrate.quadrature(
+                quadpack.quadrature(
                     _TrSphericalIntegrandLarge,
                     0.0,
                     numpy.sqrt(rap - Rmean),
                     args=(E, L, self._2dpot, rap),
-                    **kwargs
+                    **kwargs,
                 )
             )[0]
         elif Rmean < rap and fixed_quad:
@@ -589,7 +590,7 @@ class actionAngleSpherical(actionAngle):
                 numpy.sqrt(rap - Rmean),
                 args=(E, L, self._2dpot, rap),
                 n=10,
-                **kwargs
+                **kwargs,
             )[0]
         Tr = 2.0 * Tr
         return 2.0 * numpy.pi / Tr
@@ -599,12 +600,12 @@ class actionAngleSpherical(actionAngle):
         I = 0.0
         if Rmean > rperi and not fixed_quad:
             I += numpy.array(
-                integrate.quadrature(
+                quadpack.quadrature(
                     _ISphericalIntegrandSmall,
                     0.0,
                     numpy.sqrt(Rmean - rperi),
                     args=(E, L, self._2dpot, rperi),
-                    **kwargs
+                    **kwargs,
                 )
             )[0]
         elif Rmean > rperi and fixed_quad:
@@ -614,16 +615,16 @@ class actionAngleSpherical(actionAngle):
                 numpy.sqrt(Rmean - rperi),
                 args=(E, L, self._2dpot, rperi),
                 n=10,
-                **kwargs
+                **kwargs,
             )[0]
         if Rmean < rap and not fixed_quad:
             I += numpy.array(
-                integrate.quadrature(
+                quadpack.quadrature(
                     _ISphericalIntegrandLarge,
                     0.0,
                     numpy.sqrt(rap - Rmean),
                     args=(E, L, self._2dpot, rap),
-                    **kwargs
+                    **kwargs,
                 )
             )[0]
         elif Rmean < rap and fixed_quad:
@@ -633,7 +634,7 @@ class actionAngleSpherical(actionAngle):
                 numpy.sqrt(rap - Rmean),
                 args=(E, L, self._2dpot, rap),
                 n=10,
-                **kwargs
+                **kwargs,
             )[0]
         I *= 2 * L
         return I * Or / 2.0 / numpy.pi
@@ -657,12 +658,12 @@ class actionAngleSpherical(actionAngle):
             if r > rperi and not fixed_quad:
                 wr = (
                     Or
-                    * integrate.quadrature(
+                    * quadpack.quadrature(
                         _TrSphericalIntegrandSmall,
                         0.0,
                         numpy.sqrt(r - rperi),
                         args=(E, L, self._2dpot, rperi),
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             elif r > rperi and fixed_quad:
@@ -674,7 +675,7 @@ class actionAngleSpherical(actionAngle):
                         numpy.sqrt(r - rperi),
                         args=(E, L, self._2dpot, rperi),
                         n=10,
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             else:
@@ -685,12 +686,12 @@ class actionAngleSpherical(actionAngle):
             if r < rap and not fixed_quad:
                 wr = (
                     Or
-                    * integrate.quadrature(
+                    * quadpack.quadrature(
                         _TrSphericalIntegrandLarge,
                         0.0,
                         numpy.sqrt(rap - r),
                         args=(E, L, self._2dpot, rap),
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             elif r < rap and fixed_quad:
@@ -702,7 +703,7 @@ class actionAngleSpherical(actionAngle):
                         numpy.sqrt(rap - r),
                         args=(E, L, self._2dpot, rap),
                         n=10,
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             else:
@@ -730,7 +731,7 @@ class actionAngleSpherical(actionAngle):
         vtheta,
         phi,
         fixed_quad,
-        **kwargs
+        **kwargs,
     ):
         # First calculate psi
         i = numpy.arccos(Lz / L)
@@ -749,12 +750,12 @@ class actionAngleSpherical(actionAngle):
             if not fixed_quad:
                 wz = (
                     L
-                    * integrate.quadrature(
+                    * quadpack.quadrature(
                         _ISphericalIntegrandSmall,
                         0.0,
                         numpy.sqrt(r - rperi),
                         args=(E, L, self._2dpot, rperi),
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             elif fixed_quad:
@@ -766,7 +767,7 @@ class actionAngleSpherical(actionAngle):
                         numpy.sqrt(r - rperi),
                         args=(E, L, self._2dpot, rperi),
                         n=10,
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             if vr < 0.0:
@@ -775,12 +776,12 @@ class actionAngleSpherical(actionAngle):
             if not fixed_quad:
                 wz = (
                     L
-                    * integrate.quadrature(
+                    * quadpack.quadrature(
                         _ISphericalIntegrandLarge,
                         0.0,
                         numpy.sqrt(rap - r),
                         args=(E, L, self._2dpot, rap),
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             elif fixed_quad:
@@ -792,7 +793,7 @@ class actionAngleSpherical(actionAngle):
                         numpy.sqrt(rap - r),
                         args=(E, L, self._2dpot, rap),
                         n=10,
-                        **kwargs
+                        **kwargs,
                     )[0]
                 )
             if vr < 0.0:
@@ -806,9 +807,7 @@ class actionAngleSpherical(actionAngle):
 
 def _JrSphericalIntegrand(r, E, L, pot):
     """The J_r integrand"""
-    return numpy.sqrt(
-        2.0 * (E - _evaluateplanarPotentials(pot, r)) - L**2.0 / r**2.0
-    )
+    return numpy.sqrt(2.0 * (E - _evaluateplanarPotentials(pot, r)) - L**2.0 / r**2.0)
 
 
 def _TrSphericalIntegrandSmall(t, E, L, pot, rperi):

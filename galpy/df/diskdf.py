@@ -24,15 +24,13 @@ import pickle
 import numpy
 import scipy
 
-numpylog = (
-    numpy.lib.scimath.log
-)  # somehow, this code produces log(negative), which scipy (now numpy.lib.scimath.log) implements as log(|negative|) + i pi while numpy gives NaN and we want the scipy behavior; not sure where the log(negative) comes from though! I think it's for sigma=0 DFs (this test fails with numpy.log) where the DF eval has a log(~zero) that can be slightly negative because of numerical precision issues
+numpylog = numpy.lib.scimath.log  # somehow, this code produces log(negative), which scipy (now numpy.lib.scimath.log) implements as log(|negative|) + i pi while numpy gives NaN and we want the scipy behavior; not sure where the log(negative) comes from though! I think it's for sigma=0 DFs (this test fails with numpy.log) where the DF eval has a log(~zero) that can be slightly negative because of numerical precision issues
 from scipy import integrate, interpolate, optimize, stats
 
 from ..actionAngle import actionAngleAdiabatic
 from ..orbit import Orbit
 from ..potential import PowerSphericalPotential
-from ..util import conversion, save_pickles
+from ..util import conversion, quadpack, save_pickles
 from ..util.ars import ars
 from ..util.conversion import (
     _APY_LOADED,
@@ -67,7 +65,7 @@ class diskdf(df):
         beta=0.0,
         ro=None,
         vo=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize a DF
@@ -129,7 +127,7 @@ class diskdf(df):
                 dftype=self.__class__,
                 surfaceSigmaProfile=self._surfaceSigmaProfile,
                 beta=beta,
-                **kwargs
+                **kwargs,
             )
         else:
             self._correct = False
@@ -282,7 +280,7 @@ class diskdf(df):
                         vcirc,
                         sigmaR1 / self._gamma,
                     ),
-                    **kwargs
+                    **kwargs,
                 )[0]
                 / numpy.fabs(cosalphalos)
                 * sigmaR1
@@ -305,7 +303,7 @@ class diskdf(df):
                         vcirc,
                         sigmaR1,
                     ),
-                    **kwargs
+                    **kwargs,
                 )[0]
                 / numpy.fabs(sinalphalos)
                 * sigmaR1
@@ -363,7 +361,7 @@ class diskdf(df):
                         vcirc,
                         sigmaR1 / self._gamma,
                     ),
-                    **kwargs
+                    **kwargs,
                 )[0]
                 / numpy.fabs(cosalphaperp)
                 * sigmaR1
@@ -387,7 +385,7 @@ class diskdf(df):
                         vcirc,
                         sigmaR1,
                     ),
-                    **kwargs
+                    **kwargs,
                 )[0]
                 / numpy.fabs(sinalphaperp)
                 * sigmaR1
@@ -1535,9 +1533,9 @@ class diskdf(df):
             self._vmomentsurfacemass(R, 0, 4, romberg=romberg, nsigma=nsigma) / surfmass
         )
         s2 = vt2 - vt**2.0
-        return (
-            vt4 - 4.0 * vt * vt3 + 6.0 * vt**2.0 * vt2 - 3.0 * vt**4.0
-        ) * s2 ** (-2.0) - 3.0
+        return (vt4 - 4.0 * vt * vt3 + 6.0 * vt**2.0 * vt2 - 3.0 * vt**4.0) * s2 ** (
+            -2.0
+        ) - 3.0
 
     @potential_physical_input
     def kurtosisvR(self, R, romberg=False, nsigma=None, phi=0.0):
@@ -1580,9 +1578,9 @@ class diskdf(df):
             self._vmomentsurfacemass(R, 4, 0, romberg=romberg, nsigma=nsigma) / surfmass
         )
         s2 = vr2 - vr**2.0
-        return (
-            vr4 - 4.0 * vr * vr3 + 6.0 * vr**2.0 * vr2 - 3.0 * vr**4.0
-        ) * s2 ** (-2.0) - 3.0
+        return (vr4 - 4.0 * vr * vr3 + 6.0 * vr**2.0 * vr2 - 3.0 * vr**4.0) * s2 ** (
+            -2.0
+        ) - 3.0
 
     def _ELtowRRapRperi(self, E, L):
         """
@@ -1782,9 +1780,7 @@ class diskdf(df):
                 self._gamma
             )
         else:
-            return (
-                self.targetSigma2(R, log=log, use_physical=False) / self._gamma**2.0
-            )
+            return self.targetSigma2(R, log=log, use_physical=False) / self._gamma**2.0
 
 
 class dehnendf(diskdf):
@@ -1796,7 +1792,7 @@ class dehnendf(diskdf):
         profileParams=(1.0 / 3.0, 1.0, 0.2),
         correct=False,
         beta=0.0,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize a Dehnen 'new' DF.
@@ -1834,7 +1830,7 @@ class dehnendf(diskdf):
             correct=correct,
             dftype="dehnen",
             beta=beta,
-            **kwargs
+            **kwargs,
         )
 
     def eval(self, E, L, logSigmaR=0.0, logsigmaR2=0.0):
@@ -1940,7 +1936,7 @@ class dehnendf(diskdf):
         targetSurfmass=True,
         targetSigma2=True,
         maxd=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Sample n*nphi points from this DF.
@@ -2247,7 +2243,7 @@ class shudf(diskdf):
         profileParams=(1.0 / 3.0, 1.0, 0.2),
         correct=False,
         beta=0.0,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize a Shu DF.
@@ -2285,7 +2281,7 @@ class shudf(diskdf):
             correct=correct,
             dftype="shu",
             beta=beta,
-            **kwargs
+            **kwargs,
         )
 
     def eval(self, E, L, logSigmaR=0.0, logsigmaR2=0.0):
@@ -2357,7 +2353,7 @@ class shudf(diskdf):
         maxd=None,
         targetSurfmass=True,
         targetSigma2=True,
-        **kwargs
+        **kwargs,
     ):
         """
         Sample n*nphi points from this DF.
@@ -2595,7 +2591,7 @@ class schwarzschilddf(shudf):
         profileParams=(1.0 / 3.0, 1.0, 0.2),
         correct=False,
         beta=0.0,
-        **kwargs
+        **kwargs,
     ):
         """
         Initialize a Schwarzschild DF.
@@ -2636,7 +2632,7 @@ class schwarzschilddf(shudf):
             correct=correct,
             dftype="schwarzschild",
             beta=beta,
-            **kwargs
+            **kwargs,
         )
 
 
@@ -2702,7 +2698,7 @@ def _oned_intFunc(x, twodfunc, gfun, hfun, tol, args):
     """Internal function for bovy_dblquad"""
     thisargs = copy.deepcopy(args)
     thisargs.insert(0, x)
-    return integrate.romberg(twodfunc, gfun(x), hfun(x), args=thisargs, tol=tol)
+    return quadpack.romberg(twodfunc, gfun(x), hfun(x), args=thisargs, tol=tol)
 
 
 def bovy_dblquad(func, a, b, gfun, hfun, args=(), tol=1.48e-08):
@@ -2733,9 +2729,9 @@ def bovy_dblquad(func, a, b, gfun, hfun, args=(), tol=1.48e-08):
 
     Notes
     -----
-    - 2010-03-11 - Written - Bpvy (NYU)
+    - 2010-03-11 - Written - Bovy (NYU)
     """
-    return integrate.romberg(
+    return quadpack.romberg(
         _oned_intFunc, a, b, args=(func, gfun, hfun, tol, args), tol=tol
     )
 

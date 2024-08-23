@@ -219,9 +219,9 @@ def _update_keys_named_objects():
         # Format the keys of the known objects dictionary, first collections
         old_keys = list(_known_objects["_collections"].keys())
         for old_key in old_keys:
-            _known_objects["_collections"][
-                _named_objects_key_formatting(old_key)
-            ] = _known_objects["_collections"].pop(old_key)
+            _known_objects["_collections"][_named_objects_key_formatting(old_key)] = (
+                _known_objects["_collections"].pop(old_key)
+            )
         # Then the objects themselves
         old_keys = list(_known_objects.keys())
         old_keys.remove("_collections")
@@ -488,9 +488,7 @@ class Orbit:
             elif (
                 not vxvv.galcen_distance is None
                 and numpy.fabs(
-                    ro**2.0
-                    + zo**2.0
-                    - vxvv.galcen_distance.to(units.kpc).value ** 2.0
+                    ro**2.0 + zo**2.0 - vxvv.galcen_distance.to(units.kpc).value ** 2.0
                 )
                 > 1e-10
             ):
@@ -643,8 +641,7 @@ class Orbit:
                 / units.s
             )
             gc_frame = coordinates.Galactocentric(
-                galcen_distance=numpy.sqrt(self._ro**2.0 + self._zo**2.0)
-                * units.kpc,
+                galcen_distance=numpy.sqrt(self._ro**2.0 + self._zo**2.0) * units.kpc,
                 z_sun=self._zo * units.kpc,
                 galcen_v_sun=galcen_v_sun,
             )
@@ -1076,9 +1073,7 @@ class Orbit:
                 Gravitational field to use. Default is the gravitational field used to integrate the orbit.
             normed : bool, optional
                 if set, plot {quant}(t)/{quant}(0) rather than {quant}(t)
-            """.format(
-                    quant=name.split("plot")[1]
-                )
+            """.format(quant=name.split("plot")[1])
             else:
                 Estring = ""
             _plot.__doc__ = """Plot {quant}(t) along the orbit.
@@ -1107,9 +1102,7 @@ class Orbit:
             -----
             - 2019-04-13 - Written - Bovy (UofT)
 
-            """.format(
-                quant=name.split("plot")[1], Estring=Estring
-            )
+            """.format(quant=name.split("plot")[1], Estring=Estring)
             return _plot
         else:
             raise AttributeError(
@@ -2148,9 +2141,7 @@ class Orbit:
                             for jj in range(self.size)
                         ]
                     )
-                    + (
-                        thiso[1] ** 2.0 / 2.0 + thiso[2] ** 2.0 / 2.0 + vz**2.0 / 2.0
-                    ).T
+                    + (thiso[1] ** 2.0 / 2.0 + thiso[2] ** 2.0 / 2.0 + vz**2.0 / 2.0).T
                 )
         elif self.phasedim() == 6:
             z = kwargs.get("_z", 1.0) * thiso[3]  # For ER and Ez
@@ -2187,9 +2178,7 @@ class Orbit:
                             for jj in range(self.size)
                         ]
                     )
-                    + (
-                        thiso[1] ** 2.0 / 2.0 + thiso[2] ** 2.0 / 2.0 + vz**2.0 / 2.0
-                    ).T
+                    + (thiso[1] ** 2.0 / 2.0 + thiso[2] ** 2.0 / 2.0 + vz**2.0 / 2.0).T
                 )
         if onet:
             return out[:, 0]
@@ -4103,7 +4092,7 @@ class Orbit:
         if self.dim() != 3:
             raise AttributeError("Orbit must be 3D to use theta()")
         else:
-            return numpy.arctan2(thiso[0], thiso[3])
+            return numpy.arctan2(thiso[0], thiso[3]).T
 
     @physical_conversion("angle_deg")
     @shapeDecorator
@@ -6242,14 +6231,18 @@ class Orbit:
   margin: {{t: 20}},
   hovermode: 'closest',
   showlegend: false,
-""".format(
-            xlabel=xlabels[0], ylabel=ylabels[0], xmin=xmin[0], xmax=xmax[0]
-        )
+""".format(xlabel=xlabels[0], ylabel=ylabels[0], xmin=xmin[0], xmax=xmax[0])
         hovertemplate = (
-            lambda name, xlabel, ylabel, tlabel: f"""'<b>{name}</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
+            lambda name,
+            xlabel,
+            ylabel,
+            tlabel: f"""'<b>{name}</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
         )
         hovertemplate_current = (
-            lambda name, xlabel, ylabel, tlabel: f"""'<b>{name} (Current location)</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
+            lambda name,
+            xlabel,
+            ylabel,
+            tlabel: f"""'<b>{name} (Current location)</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
         )
         for ii in range(1, nplots):
             layout += """  xaxis{idx}: {{
@@ -6465,9 +6458,7 @@ class Orbit:
         else:  # else for "if there is a 2nd panel"
             setup_trace2 = """
     let traces= [{traces_cumul}];
-""".format(
-                traces_cumul=traces_cumul
-            )
+""".format(traces_cumul=traces_cumul)
         if len(d1s) > 2:
             setup_trace3 = """
     let trace{trace_num_1}= {{
@@ -6565,15 +6556,11 @@ class Orbit:
                 traces_cumul += f""",trace{str(4*self.size+2*ii+1)},trace{str(4*self.size+2*ii+2)}"""
             setup_trace3 += """
             let traces= [{traces_cumul}];
-            """.format(
-                traces_cumul=traces_cumul
-            )
+            """.format(traces_cumul=traces_cumul)
         elif len(d1s) > 1:  # elif for "if there is a 3rd panel
             setup_trace3 = """
     let traces= [{traces_cumul}];
-""".format(
-                traces_cumul=traces_cumul
-            )
+""".format(traces_cumul=traces_cumul)
         else:  # else for "if there is a 3rd or 2nd panel" (don't think we can get here!)
             setup_trace3 = ""
         return HTML(
@@ -7014,10 +7001,18 @@ if ( typeof window.require == 'undefined' ) {{
                 ]
             )
         hovertemplate = (
-            lambda name, xlabel, ylabel, zlabel, tlabel: f"""'<b>{name}</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{zlabel}</b>: %{{z:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
+            lambda name,
+            xlabel,
+            ylabel,
+            zlabel,
+            tlabel: f"""'<b>{name}</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{zlabel}</b>: %{{z:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
         )
         hovertemplate_current = (
-            lambda name, xlabel, ylabel, zlabel, tlabel: f"""'<b>{name} (Current location)</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{zlabel}</b>: %{{z:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
+            lambda name,
+            xlabel,
+            ylabel,
+            zlabel,
+            tlabel: f"""'<b>{name} (Current location)</b>' + '<br><b>{xlabel}</b>: %{{x:.2f}}' + '<br><b>{ylabel}</b>: %{{y:.2f}}' + '<br><b>{zlabel}</b>: %{{z:.2f}}' + '<br><b>{tlabel}</b>: %{{customdata:.2f}}'"""
         )
         layout = """{{
             scene:{{
@@ -8056,9 +8051,11 @@ def _parse_radec_kwargs(orb, kwargs, vel=False, dontpop=False, thiso=None):
     if isinstance(obs, list) and not thiso is None and thiso.shape[1] > orb.size:
         nt = thiso.shape[1] // orb.size
         obs = [
-            numpy.tile(obs[ii], nt)
-            if isinstance(obs[ii], numpy.ndarray) and obs[ii].ndim > 0
-            else obs[ii]
+            (
+                numpy.tile(obs[ii], nt)
+                if isinstance(obs[ii], numpy.ndarray) and obs[ii].ndim > 0
+                else obs[ii]
+            )
             for ii in range(len(obs))
         ]
         ro = numpy.tile(ro, nt) if isinstance(ro, numpy.ndarray) and ro.ndim > 0 else ro

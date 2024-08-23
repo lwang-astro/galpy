@@ -5905,8 +5905,7 @@ def _check_energy_jacobi_angmom(os, list_os):
             ), "Evaluating Orbits L does not agree with Orbit"
         if os.dim() != 1:
             assert numpy.all(
-                numpy.fabs(os.Lz(times)[ii] / list_os[ii].Lz(times) - 1.0)
-                < 10.0**-10.0
+                numpy.fabs(os.Lz(times)[ii] / list_os[ii].Lz(times) - 1.0) < 10.0**-10.0
             ), "Evaluating Orbits Lz does not agree with Orbit"
         if os.phasedim() % 2 == 0 and os.dim() != 1:
             assert numpy.all(
@@ -6558,11 +6557,11 @@ def test_flip():
             numpy.fabs(o._vo - of._vo) < 10.0**-15.0
         ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         if ii == 4:
-            assert (o._zo is None) * (
-                of._zo is None
+            assert (
+                (o._zo is None) * (of._zo is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
-            assert (o._solarmotion is None) * (
-                of._solarmotion is None
+            assert (
+                (o._solarmotion is None) * (of._solarmotion is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         else:
             assert (
@@ -6638,11 +6637,11 @@ def test_flip_inplace():
             numpy.fabs(o._vo - of._vo) < 10.0**-15.0
         ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         if ii == 4:
-            assert (o._zo is None) * (
-                of._zo is None
+            assert (
+                (o._zo is None) * (of._zo is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
-            assert (o._solarmotion is None) * (
-                of._solarmotion is None
+            assert (
+                (o._solarmotion is None) * (of._solarmotion is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         else:
             assert (
@@ -6731,11 +6730,11 @@ def test_flip_inplace_integrated():
             numpy.fabs(o._vo - of._vo) < 10.0**-15.0
         ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         if ii == 4:
-            assert (o._zo is None) * (
-                of._zo is None
+            assert (
+                (o._zo is None) * (of._zo is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
-            assert (o._solarmotion is None) * (
-                of._solarmotion is None
+            assert (
+                (o._solarmotion is None) * (of._solarmotion is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         else:
             assert (
@@ -6830,11 +6829,11 @@ def test_flip_inplace_integrated_evaluated():
             numpy.fabs(o._vo - of._vo) < 10.0**-15.0
         ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         if ii == 4:
-            assert (o._zo is None) * (
-                of._zo is None
+            assert (
+                (o._zo is None) * (of._zo is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
-            assert (o._solarmotion is None) * (
-                of._solarmotion is None
+            assert (
+                (o._solarmotion is None) * (of._solarmotion is None)
             ), "o.flip() did not conserve physical scales and coordinate-transformation parameters"
         else:
             assert (
@@ -8330,8 +8329,7 @@ def test_physical_output_on():
         ), "o.vz() output for Orbit setup with vo= does not work as expected when turned back on"
         # Test energies
         assert (
-            numpy.fabs(o.E(pot=lp) - o_orig.E(pot=lp, use_physical=True))
-            < 10.0**-10.0
+            numpy.fabs(o.E(pot=lp) - o_orig.E(pot=lp, use_physical=True)) < 10.0**-10.0
         ), "o.E() output for Orbit setup with vo= does not work as expected when turned back on"
         assert (
             numpy.fabs(o.Jacobi(pot=lp) - o_orig.Jacobi(pot=lp, use_physical=True))

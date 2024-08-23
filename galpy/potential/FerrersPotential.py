@@ -373,9 +373,9 @@ def _potInt(x, y, z, a2, b2, c2, n):
     def integrand(tau):
         return _FracInt(x, y, z, a2, b2, c2, tau, n + 1)
 
-    return integrate.quad(
-        integrand, lowerlim(x**2, y**2, z**2, a2, b2, c2), numpy.inf
-    )[0]
+    return integrate.quad(integrand, lowerlim(x**2, y**2, z**2, a2, b2, c2), numpy.inf)[
+        0
+    ]
 
 
 def _forceInt(x, y, z, a2, b2, c2, n, i):
@@ -427,9 +427,9 @@ def _2ndDerivInt(x, y, z, a2, b2, c2, n, i, j):
                 tau + coef2
             ) ** 2 + _FracInt(x, y, z, a2, b2, c2, tau, n) * (-2.0 / (tau + coef2))
 
-    return integrate.quad(
-        integrand, lowerlim(x**2, y**2, z**2, a2, b2, c2), numpy.inf
-    )[0]
+    return integrate.quad(integrand, lowerlim(x**2, y**2, z**2, a2, b2, c2), numpy.inf)[
+        0
+    ]
 
 
 def _FracInt(x, y, z, a, b, c, tau, n):
@@ -439,9 +439,7 @@ def _FracInt(x, y, z, a, b, c, tau, n):
     sqrt(tau+a)(tau+b)(tau+c))       tau+a     tau+b     tau+c
     """
     denom = numpy.sqrt((a + tau) * (b + tau) * (c + tau))
-    return (
-        1.0 - x**2 / (a + tau) - y**2 / (b + tau) - z**2 / (c + tau)
-    ) ** n / denom
+    return (1.0 - x**2 / (a + tau) - y**2 / (b + tau) - z**2 / (c + tau)) ** n / denom
 
 
 def lowerlim(x, y, z, a, b, c):

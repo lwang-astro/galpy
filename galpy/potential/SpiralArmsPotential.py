@@ -95,12 +95,8 @@ class SpiralArmsPotential(Potential):
         Rs = conversion.parse_length(Rs, ro=self._ro)
         H = conversion.parse_length(H, ro=self._ro)
         omega = conversion.parse_frequency(omega, ro=self._ro, vo=self._vo)
-        self._N = (
-            -N
-        )  # trick to flip to left handed coordinate system; flips sign for phi and phi_ref, but also alpha.
-        self._alpha = (
-            -alpha
-        )  # we don't want sign for alpha to change, so flip alpha. (see eqn. 3 in the paper)
+        self._N = -N  # trick to flip to left handed coordinate system; flips sign for phi and phi_ref, but also alpha.
+        self._alpha = -alpha  # we don't want sign for alpha to change, so flip alpha. (see eqn. 3 in the paper)
         self._sin_alpha = numpy.sin(-alpha)
         self._tan_alpha = numpy.tan(-alpha)
         self._r_ref = r_ref
@@ -465,8 +461,7 @@ class SpiralArmsPotential(Potential):
                                 + (
                                     self._ns
                                     * (
-                                        sin_ng
-                                        * (d2g_dR2 / Ks - dg_dR / Ks**2 * dKs_dR)
+                                        sin_ng * (d2g_dR2 / Ks - dg_dR / Ks**2 * dKs_dR)
                                         + dg_dR**2 / Ks * cos_ng * self._ns
                                     )
                                     + z
@@ -498,10 +493,7 @@ class SpiralArmsPotential(Potential):
                                             / Ks
                                             * ztanhzKB
                                             * (dKs_dR / Bs - dBs_dR / Bs**2 * Ks)
-                                            - (
-                                                d2Bs_dR2 / Ks
-                                                - dBs_dR * dKs_dR / Ks**2
-                                            )
+                                            - (d2Bs_dR2 / Ks - dBs_dR * dKs_dR / Ks**2)
                                             * log_sechzKB
                                         )
                                         + dBs_dR
@@ -514,15 +506,8 @@ class SpiralArmsPotential(Potential):
                                     + (
                                         (
                                             cos_ng
-                                            * (
-                                                d2Ks_dR2 / Ks**2
-                                                - 2 * dKs_dR**2 / Ks**3
-                                            )
-                                            - dKs_dR
-                                            / Ks**2
-                                            * sin_ng
-                                            * self._ns
-                                            * dg_dR
+                                            * (d2Ks_dR2 / Ks**2 - 2 * dKs_dR**2 / Ks**3)
+                                            - dKs_dR / Ks**2 * sin_ng * self._ns * dg_dR
                                         )
                                         + (
                                             cos_ng
