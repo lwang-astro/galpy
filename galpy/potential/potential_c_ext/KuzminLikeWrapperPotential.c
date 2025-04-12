@@ -31,7 +31,7 @@ double KuzminLikeWrapperPotentialEval(double R,double z,double phi,
   //Calculate potential, only used in actionAngle, so phi=0, t=0
   return amp * evaluatePotentials(
     KuzminLikeWrapperPotential_xi(R,z,a,b2),
-    0.0,
+    0.0,0.0,t,
     potentialArgs->nwrapped,
 		potentialArgs->wrappedPotentialArg
   );

@@ -85,7 +85,7 @@ static inline void calcEREzL(int ndata,
   UNUSED int chunk= CHUNKSIZE;
 #pragma omp parallel for schedule(static,chunk) private(ii)
   for (ii=0; ii < ndata; ii++){
-    *(ER+ii)= evaluatePotentials(*(R+ii),0.,
+    *(ER+ii)= evaluatePotentials(*(R+ii),0.,0.,0.,
 				 nargs,actionAngleArgs)
       + 0.5 * *(vR+ii) * *(vR+ii)
       + 0.5 * *(vT+ii) * *(vT+ii);
@@ -595,7 +595,7 @@ double JRAdiabaticIntegrand(double R,
 double JRAdiabaticIntegrandSquared(double R,
 				  void * p){
   struct JRAdiabaticArg * params= (struct JRAdiabaticArg *) p;
-  return params->ER - evaluatePotentials(R,0.,params->nargs,params->actionAngleArgs) - params->Lz22 / R / R;
+  return params->ER - evaluatePotentials(R,0.,0.,0.,params->nargs,params->actionAngleArgs) - params->Lz22 / R / R;
 }
 double JzAdiabaticIntegrand(double z,
 			    void * p){
@@ -611,6 +611,6 @@ double JzAdiabaticIntegrandSquared(double z,
 double evaluateVerticalPotentials(double R, double z,
 				  int nargs,
 				  struct potentialArg * actionAngleArgs){
-  return evaluatePotentials(R,z,nargs,actionAngleArgs)
-    -evaluatePotentials(R,0.,nargs,actionAngleArgs);
+  return evaluatePotentials(R,z,0.,0.,nargs,actionAngleArgs)
+      -evaluatePotentials(R,0.,0.,0.,nargs,actionAngleArgs);
 }

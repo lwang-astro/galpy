@@ -85,3 +85,13 @@ small and larger extensions of galpy that would be useful
 well as a longer-term roadmap
 [here](http://github.com/jobovy/galpy/wiki/Roadmap). Please let the main
 developer know if you need any help contributing!
+
+MODIFYICATION TO FIT PETAR
+====================
+
+The original c++ interface has several problems for calling potentialEval functions.
+The necessary modification is needed to allow PeTar code correctly use the code.
+
+Main change:
+1. Fix bug of calling potential functions for several potential types.
+2. Add support to calculate time-dependent 3D potential values for c++ interface.

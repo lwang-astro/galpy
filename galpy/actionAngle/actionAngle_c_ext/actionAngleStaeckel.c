@@ -173,7 +173,7 @@ double dJzdI3StaeckelIntegrand(double,void *);
 double dJzdI3LowStaeckelIntegrand(double,void *);
 double dJzdI3HighStaeckelIntegrand(double,void *);
 double u0Equation(double,void *);
-double evaluatePotentials(double,double,int, struct potentialArg *);
+double evaluatePotentials(double,double,double,double,int, struct potentialArg *);
 double evaluatePotentialsUV(double,double,double,int,struct potentialArg *);
 /*
   Actual functions, inlines first
@@ -217,7 +217,7 @@ static inline void calcEL(int ndata,
 			  struct potentialArg * actionAngleArgs){
   int ii;
   for (ii=0; ii < ndata; ii++){
-    *(E+ii)= evaluatePotentials(*(R+ii),*(z+ii),
+    *(E+ii)= evaluatePotentials(*(R+ii),*(z+ii),0.,0.,
 				nargs,actionAngleArgs)
       + 0.5 * *(vR+ii) * *(vR+ii)
       + 0.5 * *(vT+ii) * *(vT+ii)
@@ -1987,5 +1987,5 @@ double evaluatePotentialsUV(double u, double v, double delta,
 			    struct potentialArg * actionAngleArgs){
   double R,z;
   uv_to_Rz(u,v,&R,&z,delta);
-  return evaluatePotentials(R,z,nargs,actionAngleArgs);
+  return evaluatePotentials(R,z,0.,0.,nargs,actionAngleArgs);
 }

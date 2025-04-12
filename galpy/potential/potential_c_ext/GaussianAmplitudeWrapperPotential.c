@@ -11,7 +11,7 @@ double GaussianAmplitudeWrapperPotentialEval(double R,double z,double phi,
   double * args= potentialArgs->args;
   //Calculate potential, only used in actionAngle, so phi=0, t=0
   return *args * gaussSmooth(t,*(args+1),*(args+2))	\
-    * evaluatePotentials(R,z,
+    * evaluatePotentials(R,z,0.,0.,
 			 potentialArgs->nwrapped,
 			 potentialArgs->wrappedPotentialArg);
 }
